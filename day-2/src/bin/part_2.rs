@@ -4,8 +4,24 @@ struct Report(Vec<usize>);
 const MIN_DIFF: usize = 1;
 const MAX_DIFF: usize = 3;
 
-fn is_safe(levels: &Vec<usize>) -> bool {
-    all_decreasing(levels) || all_increasing(levels)
+fn is_safe(levels: &Vec<usize>, stop: bool) -> bool {
+    println!("levels {:?}, stop: {stop}", levels);
+    if all_decreasing(levels) || all_increasing(levels) {
+        return true;
+    } else if stop {
+        return false;
+    } else {
+        for i in 0..levels.len() {
+            let mut filtered_levels = levels.clone();
+            filtered_levels.remove(i);
+            println!("filtered_levels {:?}", filtered_levels);
+
+            if is_safe(&filtered_levels, true) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 fn all_increasing(levels: &Vec<usize>) -> bool {
@@ -48,7 +64,7 @@ fn main() {
         .trim()
         .lines()
         .map(|line| Report::from(line))
-        .filter(|r| is_safe(&r.0))
+        .filter(|r| is_safe(&r.0, false))
         .collect::<Vec<_>>()
         .len();
 
