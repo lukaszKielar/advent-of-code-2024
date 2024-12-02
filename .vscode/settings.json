@@ -1,0 +1,20 @@
+{
+    "[jsonc]": {
+        "editor.formatOnSave": false
+    },
+    "[markdown]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        },
+        "editor.formatOnSave": true
+    },
+    "[rust]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "editor.formatOnSave": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true
+}

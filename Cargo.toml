@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "day-*",
+]
+
+[workspace.dependencies]
+lazy_static = "1.5"
+regex = "1.11"
+rstest = "0.23"
