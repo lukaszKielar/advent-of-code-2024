@@ -1,4 +1,6 @@
 fn main() {
+    // let input = "
+    // ";
     let input = include_str!("../../../inputs/day-N.txt");
 }
 
