@@ -1,14 +1,14 @@
 fn main() {
-    let input = "MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX";
+    //     let input = "MMMSXXMASM
+    // MSAMXMSMSA
+    // AMXSXMAAMM
+    // MSAMASMSMX
+    // XMASAMXAMM
+    // XXAMMXXAMA
+    // SMSMSASXSS
+    // SAXAMASAAA
+    // MAMMMXMMMM
+    // MXMXAXMASX";
     let input = include_str!("../../../inputs/day-4.txt");
 
     let char_matrix = input
