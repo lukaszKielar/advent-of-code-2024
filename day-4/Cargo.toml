@@ -1,0 +1,17 @@
+[package]
+name = "day-4"
+description = "https://adventofcode.com/2024/day/4"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "part_1"
+
+[[bin]]
+name = "part_2"
+
+[dependencies]
+regex.workspace = true
+
+[dev-dependencies]
+rstest.workspace = true
