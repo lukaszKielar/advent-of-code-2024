@@ -1,17 +1,8 @@
 fn main() {
-    // let input = "
-    // ";
     let input = include_str!("../../../inputs/day-N.txt");
-}
 
-#[cfg(test)]
-mod tests {
-    use rstest::rstest;
+    let res = day_N::part_1::process(input);
 
-    use super::*;
-
-    #[rstest]
-    fn test_1() {
-        assert!(true)
-    }
+    println!("{:?}", res);
+    assert_eq!(res, -999);
 }
