@@ -3,6 +3,6 @@ fn main() {
 
     let res = day_N::part_2::process(input);
 
-    println!("{:?}", res);
+    println!("res: {res}");
     assert_eq!(res, -999);
 }

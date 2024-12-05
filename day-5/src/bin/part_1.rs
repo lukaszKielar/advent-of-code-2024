@@ -162,7 +162,7 @@ fn main() {
         .sum();
 
     // assert_eq!(res, 143);
-    println!("res: {:?}", res);
+    println!("res: {res}");
 }
 
 #[cfg(test)]
