@@ -1,64 +1,22 @@
+use std::collections::HashSet;
+
 pub mod part_1;
 pub mod part_2;
 
+// assuming that first direction moves guard upwards
+// [UP, RIGHT, DOWN, LEFT]
+const DIRECTIONS: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+const START: char = '^';
 const OBSTACLE: char = '#';
 
-type Coords = (usize, usize);
-
+type Coords = (i32, i32);
 type Matrix = Vec<Vec<char>>;
 
-#[derive(Debug, PartialEq)]
-struct Point {
-    direction: Direction,
-    coords: Coords,
-}
-
-impl Point {
-    fn next_point_coords(&self) -> Coords {
-        match self.direction {
-            Direction::UP => (self.coords.0 - 1, self.coords.1),
-            Direction::DOWN => (self.coords.0 + 1, self.coords.1),
-            Direction::LEFT => (self.coords.0, self.coords.1 - 1),
-            Direction::RIGHT => (self.coords.0, self.coords.1 + 1),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-}
-
-impl Direction {
-    fn turn_right(&self) -> Direction {
-        match self {
-            Direction::UP => Direction::RIGHT,
-            Direction::DOWN => Direction::LEFT,
-            Direction::LEFT => Direction::UP,
-            Direction::RIGHT => Direction::DOWN,
-        }
-    }
-}
-
-fn get_starting_point(matrix: &Matrix) -> Point {
+fn get_starting_coords(matrix: &Matrix) -> Coords {
     for i in 0..matrix.len() {
         for j in 0..matrix[0].len() {
-            let elem = matrix[i][j];
-            if ['^', '>', 'v', '<'].contains(&elem) {
-                let direction = match elem {
-                    '^' => Direction::UP,
-                    '>' => Direction::RIGHT,
-                    'v' => Direction::DOWN,
-                    '<' => Direction::LEFT,
-                    _ => panic!("invalid direction"),
-                };
-                return Point {
-                    direction,
-                    coords: (i, j),
-                };
+            if matrix[i][j] == START {
+                return (i as i32, j as i32);
             }
         }
     }
@@ -73,39 +31,34 @@ fn parse_input(input: &str) -> Matrix {
         .collect()
 }
 
-#[cfg(test)]
-fn pretty_print(matrix: &Matrix) {
-    println!("{}", (0..10).map(|_| '-').collect::<String>());
-    for i in 0..matrix.len() {
-        println!("{}", matrix[i].iter().collect::<String>());
-    }
-    println!("")
-}
+fn calculate_guard_movement(matrix: &Matrix, (i, j): Coords) -> HashSet<Coords> {
+    let mut directions = DIRECTIONS.iter().cycle();
+    let (mut delta_i, mut delta_j): &(i32, i32) = directions.next().unwrap();
+    let mut visited_cells: HashSet<(i32, i32)> = HashSet::from([(i, j)]);
+    let (mut i, mut j): (i32, i32) = (i, j);
 
-fn move_guard_around(matrix: Matrix, coords: Coords, direction: Direction) -> Matrix {
-    // pretty_print(&matrix);
-    let mut matrix = matrix;
-    matrix[coords.0][coords.1] = 'X';
+    loop {
+        let (next_i, next_j) = (i + delta_i, j + delta_j);
 
-    let next_coords = match direction {
-        Direction::UP => (coords.0 - 1, coords.1),
-        Direction::DOWN => (coords.0 + 1, coords.1),
-        Direction::LEFT => (coords.0, coords.1 - 1),
-        Direction::RIGHT => (coords.0, coords.1 + 1),
-    };
+        // return if out of bounds
+        let cell = match matrix
+            .get(next_i as usize)
+            .and_then(|row| row.get(next_j as usize))
+        {
+            Some(&c) => c,
+            None => return visited_cells,
+        };
 
-    if next_coords.0 == usize::MAX
-        || next_coords.0 >= matrix.len()
-        || next_coords.1 == usize::MAX
-        || next_coords.1 >= matrix[0].len()
-    {
-        return matrix;
-    };
-
-    if matrix[next_coords.0][next_coords.1] == OBSTACLE {
-        return move_guard_around(matrix, coords, direction.turn_right());
-    } else {
-        return move_guard_around(matrix, next_coords, direction);
+        match cell {
+            // switch direction, but keep current position if obstacle
+            OBSTACLE => (delta_i, delta_j) = *directions.next().unwrap(),
+            // still within bounds and got cell that is legit
+            '.' | START => {
+                visited_cells.insert((next_i, next_j));
+                (i, j) = (next_i, next_j);
+            }
+            c => panic!("unknown cell: {c}"),
+        }
     }
 }
 
@@ -135,46 +88,8 @@ mod tests {
     }
 
     #[fixture]
-    fn starting_point(matrix: Matrix) -> Point {
-        get_starting_point(&matrix)
-    }
-
-    #[rstest]
-    fn test_get_starting_point(matrix: Matrix) {
-        // when
-        let output = get_starting_point(&matrix);
-
-        // then
-        assert_eq!(
-            output,
-            Point {
-                direction: Direction::UP,
-                coords: (6, 4)
-            }
-        )
-    }
-
-    #[rstest]
-    fn test_move_guard_around(matrix: Matrix, starting_point: Point) {
-        // when
-        let output = move_guard_around(matrix, starting_point.coords, starting_point.direction);
-
-        // then
-        assert_eq!(
-            output,
-            [
-                ['.', '.', '.', '.', '#', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', 'X', 'X', 'X', 'X', 'X', '#'],
-                ['.', '.', '.', '.', 'X', '.', '.', '.', 'X', '.'],
-                ['.', '.', '#', '.', 'X', '.', '.', '.', 'X', '.'],
-                ['.', '.', 'X', 'X', 'X', 'X', 'X', '#', 'X', '.'],
-                ['.', '.', 'X', '.', 'X', '.', 'X', '.', 'X', '.'],
-                ['.', '#', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.'],
-                ['.', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '#', '.'],
-                ['#', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.', '.'],
-                ['.', '.', '.', '.', '.', '.', '#', 'X', '.', '.']
-            ]
-        )
+    fn starting_coords(matrix: Matrix) -> Coords {
+        get_starting_coords(&matrix)
     }
 
     #[rstest]
@@ -197,6 +112,69 @@ mod tests {
                 ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                 ['.', '.', '.', '.', '.', '.', '#', '.', '.', '.']
             ]
+        )
+    }
+
+    #[rstest]
+    fn test_get_starting_coords(matrix: Matrix) {
+        // when
+        let output = get_starting_coords(&matrix);
+
+        // then
+        assert_eq!(output, (6, 4))
+    }
+
+    #[rstest]
+    fn test_calculate_guard_movement(matrix: Matrix, starting_coords: Coords) {
+        // when
+        let output = calculate_guard_movement(&matrix, starting_coords);
+
+        // then
+        assert_eq!(
+            output,
+            HashSet::from([
+                (1, 4),
+                (1, 5),
+                (1, 6),
+                (1, 7),
+                (1, 8),
+                (2, 4),
+                (2, 8),
+                (3, 4),
+                (3, 8),
+                (4, 2),
+                (4, 3),
+                (4, 4),
+                (4, 5),
+                (4, 6),
+                (4, 8),
+                (5, 2),
+                (5, 4),
+                (5, 6),
+                (5, 8),
+                (6, 2),
+                (6, 3),
+                (6, 4),
+                (6, 5),
+                (6, 6),
+                (6, 7),
+                (6, 8),
+                (7, 1),
+                (7, 2),
+                (7, 3),
+                (7, 4),
+                (7, 5),
+                (7, 6),
+                (7, 7),
+                (8, 1),
+                (8, 2),
+                (8, 3),
+                (8, 4),
+                (8, 5),
+                (8, 6),
+                (8, 7),
+                (9, 7),
+            ])
         )
     }
 }

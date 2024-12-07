@@ -1,31 +1,11 @@
-use std::usize;
-
-#[cfg(test)]
-use crate::pretty_print;
-use crate::{get_starting_point, move_guard_around, parse_input, Matrix};
-
-fn sum_all_x(matrix: &Matrix) -> usize {
-    let mut count = 0;
-    for i in 0..matrix.len() {
-        for j in 0..matrix[0].len() {
-            if matrix[i][j] == 'X' {
-                count += 1;
-            }
-        }
-    }
-    count
-}
+use crate::{calculate_guard_movement, get_starting_coords, parse_input};
 
 pub fn process(input: &str) -> usize {
     let matrix = parse_input(input);
+    let start_coords = get_starting_coords(&matrix);
+    let guard_movement = calculate_guard_movement(&matrix, start_coords);
 
-    let point = get_starting_point(&matrix);
-
-    let solved_matrix = move_guard_around(matrix, point.coords, point.direction);
-    #[cfg(test)]
-    pretty_print(&solved_matrix);
-
-    sum_all_x(&solved_matrix)
+    guard_movement.len()
 }
 
 #[cfg(test)]
