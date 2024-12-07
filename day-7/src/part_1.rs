@@ -1,28 +1,8 @@
-use crate::{calculate_expression, generate_combinations, parse_input};
-
-pub fn process(input: &str) -> usize {
-    let operators = vec!["*", "+"];
-    let input = parse_input(input);
-    let mut res = 0;
-
-    for i in input {
-        let combinations = generate_combinations(&i.1, &operators);
-        for c in combinations {
-            if calculate_expression(&c) == i.0 {
-                res += i.0;
-                break;
-            }
-        }
-    }
-
-    res
-}
-
 #[cfg(test)]
 mod tests {
     use rstest::{fixture, rstest};
 
-    use super::*;
+    use crate::process;
 
     #[fixture]
     fn input() -> &'static str {
@@ -39,8 +19,11 @@ mod tests {
 
     #[rstest]
     fn test_process(input: &str) {
+        // given
+        let operators = vec!["*", "+"];
+
         // when
-        let output = process(input);
+        let output = process(input, &operators);
 
         // then
         assert_eq!(output, 3749)
