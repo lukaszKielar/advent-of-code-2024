@@ -21,6 +21,7 @@ fn is_valid_obstacle(matrix: &Matrix, visited_coords: &Vec<Coords>, new_obstacle
 
     let mut coords_count: HashMap<Coords, usize> = HashMap::new();
     let mut current_point = get_starting_point(&matrix);
+    let mut last_8_obstacles: Vec<Coords> = Vec::new();
     let mut next_point_coords = current_point.next_point_coords();
 
     // mark point as visited and add it to count hashmap
@@ -49,7 +50,15 @@ fn is_valid_obstacle(matrix: &Matrix, visited_coords: &Vec<Coords>, new_obstacle
 
         // breaks when we discover the loop
         // FIXME: this condition doesn't work as expected, just a placeholder for now
-        if coords_count.values().all(|&elem| elem >= 2) || iter >= visited_coords.len() * 2 {
+        // I should probably collect only locations where I make a turn
+        // and break from the loop when last 8 elements 0
+        // when I can find repetitive pattern, and keep last 8 items
+        // if last_8_obstacles.len() == 8
+        //     && last_8_obstacles[0] == last_8_obstacles[4]
+        //     && last_8_obstacles[1] == last_8_obstacles[5]
+        //     && last_8_obstacles[2] == last_8_obstacles[6]
+        //     && last_8_obstacles[3] == last_8_obstacles[7]
+        if coords_count.values().all(|&elem| elem >= 2) || iter >= 200_000 {
             is_valid = true;
 
             #[cfg(test)]
@@ -61,6 +70,11 @@ fn is_valid_obstacle(matrix: &Matrix, visited_coords: &Vec<Coords>, new_obstacle
         if new_matrix[next_point_coords.0][next_point_coords.1] == OBSTACLE {
             let updated_direction = current_point.direction.turn_right();
             current_point.direction = updated_direction;
+            // last_8_obstacles.push(next_point_coords);
+            // if last_8_obstacles.len() >= 8 {
+            //     let new_last_8_obstacles = last_8_obstacles[last_8_obstacles.len() - 8..].to_vec();
+            //     last_8_obstacles = new_last_8_obstacles;
+            // }
         };
 
         #[cfg(test)]
