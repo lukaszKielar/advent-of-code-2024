@@ -17,9 +17,9 @@ fn find_antinodes(matrix: &Matrix, antennas: &HashMap<char, HashSet<Coords>>) ->
 
             let diff: Coords = (a1.0 - a2.0, a1.1 - a2.1);
 
-            let mut iter = 0;
+            let mut adder = 0;
             loop {
-                let n1: Coords = (a1.0 - ((2 + iter) * diff.0), a1.1 - ((2 + iter) * diff.1));
+                let n1: Coords = (a1.0 - ((2 + adder) * diff.0), a1.1 - ((2 + adder) * diff.1));
                 if n1.0 >= 0
                     && n1.0 < matrix.len() as i32
                     && n1.1 >= 0
@@ -30,12 +30,12 @@ fn find_antinodes(matrix: &Matrix, antennas: &HashMap<char, HashSet<Coords>>) ->
                     break;
                 }
 
-                iter += 1;
+                adder += 1;
             }
 
-            iter = 1;
+            let mut multiplier = 1;
             loop {
-                let n2: Coords = (a1.0 + (iter * diff.0), a1.1 + (iter * diff.1));
+                let n2: Coords = (a1.0 + (multiplier * diff.0), a1.1 + (multiplier * diff.1));
                 if n2.0 >= 0
                     && n2.0 < matrix.len() as i32
                     && n2.1 >= 0
@@ -45,7 +45,7 @@ fn find_antinodes(matrix: &Matrix, antennas: &HashMap<char, HashSet<Coords>>) ->
                 } else {
                     break;
                 }
-                iter += 1;
+                multiplier += 1;
             }
         }
     }
