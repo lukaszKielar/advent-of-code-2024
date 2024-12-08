@@ -1,9 +1,8 @@
 [workspace]
-members = [
-    "day-*",
-]
+members = ["day-*"]
 
 [workspace.dependencies]
+itertools = "0.13"
 lazy_static = "1.5"
 regex = "1.11"
 rstest = "0.23"
