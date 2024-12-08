@@ -4,15 +4,17 @@ pub fn process(input: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use rstest::rstest;
+    use rstest::{fixture, rstest};
 
     use super::*;
 
-    #[rstest]
-    fn test_process() {
-        // given
-        let input = "";
+    #[fixture]
+    fn input() -> &'static str {
+        ""
+    }
 
+    #[rstest]
+    fn test_process(input: &str) {
         // when
         let output = process(input);
 
