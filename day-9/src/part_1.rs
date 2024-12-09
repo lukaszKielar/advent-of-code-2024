@@ -1,20 +1,16 @@
 use std::usize;
 
-use crate::{convert_to_blocks, move_blocks_around};
+use crate::{convert_to_blocks, move_blocks_around, GAP};
 
 pub fn process(input: &str) -> usize {
     let blocks = convert_to_blocks(input.trim());
-    // println!("blocks: {:?}", blocks);
-    let blocks = move_blocks_around(&blocks);
-    // println!("moved blocks: {:?}", blocks);
+    let blocks = move_blocks_around(blocks);
 
-    let mut acc: usize = 0;
-
-    for (i, c) in blocks.chars().enumerate() {
-        acc += i * c.to_digit(10).unwrap_or(0) as usize;
-    }
-
-    acc
+    blocks
+        .iter()
+        .filter(|&&elem| elem != GAP)
+        .enumerate()
+        .fold(0, |acc, (i, &id)| acc + i * id as usize)
 }
 
 #[cfg(test)]
