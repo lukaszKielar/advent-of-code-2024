@@ -27,33 +27,12 @@ fn convert_to_blocks(input: &str) -> Blocks {
     output
 }
 
-fn move_blocks_around(blocks: Blocks) -> Blocks {
-    let mut blocks = blocks;
-
-    for i in 0..blocks.len() {
-        let mut j = blocks.len() - 1;
-        match blocks[i] {
-            GAP => {
-                while j > i {
-                    match blocks[j] {
-                        GAP => {
-                            j -= 1;
-                        }
-                        _ => {
-                            blocks[i] = blocks[j];
-                            blocks[j] = GAP;
-                            break;
-                        }
-                    }
-                }
-            }
-            _ => {
-                continue;
-            }
-        }
-    }
-
+fn checksum(blocks: Blocks) -> usize {
     blocks
+        .iter()
+        .filter(|&&elem| elem != GAP)
+        .enumerate()
+        .fold(0, |acc, (i, &id)| acc + i * id as usize)
 }
 
 #[cfg(test)]
@@ -78,24 +57,6 @@ mod tests {
             [
                 0, 0, -1, -1, -1, 1, 1, 1, -1, -1, -1, 2, -1, -1, -1, 3, 3, 3, -1, 4, 4, -1, 5, 5,
                 5, 5, -1, 6, 6, 6, 6, -1, 7, 7, 7, -1, 8, 8, 8, 8, 9, 9
-            ]
-        )
-    }
-
-    #[rstest]
-    fn test_move_blocks_around(input: &str) {
-        // given
-        let blocks = convert_to_blocks(input);
-
-        // when
-        let output = move_blocks_around(blocks);
-
-        // then
-        assert_eq!(
-            output,
-            [
-                0, 0, 9, 9, 8, 1, 1, 1, 8, 8, 8, 2, 7, 7, 7, 3, 3, 3, 6, 4, 4, 6, 5, 5, 5, 5, 6, 6,
-                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
             ]
         )
     }
