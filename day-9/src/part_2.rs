@@ -31,31 +31,34 @@ fn move_blocks_around(blocks: Blocks) -> Blocks {
                         }
                     }
                 }
-                println!("i: {i}: free space! length: {:?}", free_space);
+                println!("i[{i}], j[{j}]: free space! length: {:?}", free_space);
 
                 let mut ids_to_move = HashSet::new();
-                while j > i {
+                while j > 0 {
                     let last_id = blocks[j];
+                    let &id_count = blocks_hashmap.get(&last_id).unwrap_or(&0);
                     let second_to_last_id = blocks[j - 1];
-                    println!(
-                        "\tj: {j}, last_id: {:?}, second_to_last: {:?}",
-                        last_id, second_to_last_id
-                    );
                     if last_id == GAP {
-                        println!(
-                            "\t\tgap found at blocks[{j}]: {:?}, continue search",
-                            blocks[j]
-                        );
                         j -= 1;
                         continue;
                     }
 
-                    if last_id != second_to_last_id && ids_to_move.len() <= free_space {
-                        println!("\t\tnext block is different, and ids fit into free space");
+                    if id_count == 1
+                        || (last_id != second_to_last_id && ids_to_move.len() <= free_space)
+                    {
+                        println!(
+                            "\tnext block is different but ids fit into free space: {:?}, last_id: {last_id}",
+                            ids_to_move
+                        );
+
+                        if id_count == 1 {
+                            ids_to_move.insert(j as i32);
+                        }
+
                         let mut tmp_i = i;
                         for id_to_move in ids_to_move {
                             println!(
-                                "\t\t\treplacing blocks[{i}]: {:?} with blocks[{id_to_move}]: {:?}",
+                                "\t\treplacing blocks[{tmp_i}]: {:?} with blocks[{id_to_move}]: {:?}",
                                 blocks[i], blocks[id_to_move as usize]
                             );
                             blocks[tmp_i] = blocks[id_to_move as usize];
@@ -80,7 +83,7 @@ fn move_blocks_around(blocks: Blocks) -> Blocks {
                 continue;
             }
         }
-        println!("i: {i}, blocks: {:?}", blocks);
+        println!("\tblocks: {:?}", blocks);
     }
 
     blocks
