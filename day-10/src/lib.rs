@@ -1,21 +1,13 @@
 pub mod part_1;
 pub mod part_2;
 
-type Coords = (i32, i32);
-type TopoMap = Vec<Vec<i32>>;
+type Coords = (usize, usize);
 
-// up, right, down, left
-const DIRECTIONS: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
-
-fn parse_input(input: &str) -> TopoMap {
+fn parse_input(input: &str) -> Vec<Vec<u32>> {
     input
         .trim()
         .lines()
-        .map(|line| {
-            line.chars()
-                .map(|c| c.to_digit(10).unwrap() as i32)
-                .collect()
-        })
+        .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect()
 }
 
