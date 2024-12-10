@@ -1,99 +1,66 @@
-use std::collections::{HashMap, HashSet};
+#[derive(Debug)]
+struct FileBlock {
+    id: usize,
+    start: usize,
+    size: usize,
+}
 
-use crate::{convert_to_blocks, Blocks, GAP};
-
-// 1. iterowac od poczatku bloku
-// 2. iterowac od konca bloku
-// 3. znalezc przerwe i obliczyc jej dlugosc
-// 4. isc od tylu i sprawdzic jaki najwiekszy  indeks jest w stanie zmiescic sie w przerwie
-// 5. pobrac wszystkie elementy dla tego indeksu i wstawic je w przerwe, na ich oryginalne miejsce wstawic GAP(s)
-// 6. zakonczyc iteracje kiedy przejde po wszystkich przerwach ORAZ kiedy iteracja do przodu jest mniejsza od iteracji od konca
-fn move_blocks_around(blocks: Blocks) -> Blocks {
-    let mut blocks = blocks;
-    let mut blocks_hashmap = HashMap::new();
-    for &id in &blocks {
-        *blocks_hashmap.entry(id).or_insert(0) += 1;
-    }
-
-    for i in 0..blocks.len() {
-        let mut j = blocks.len() - 1;
-
-        match blocks[i] {
-            GAP => {
-                let mut free_space = 1;
-                for &id in blocks[i + 1..=j].iter() {
-                    match id {
-                        GAP => {
-                            free_space += 1;
-                        }
-                        _ => {
-                            break;
-                        }
-                    }
-                }
-                println!("i[{i}], j[{j}]: free space! length: {:?}", free_space);
-
-                let mut ids_to_move = HashSet::new();
-                while j > 0 {
-                    let last_id = blocks[j];
-                    let &id_count = blocks_hashmap.get(&last_id).unwrap_or(&0);
-                    let second_to_last_id = blocks[j - 1];
-                    if last_id == GAP {
-                        j -= 1;
-                        continue;
-                    }
-
-                    if id_count == 1
-                        || (last_id != second_to_last_id && ids_to_move.len() <= free_space)
-                    {
-                        println!(
-                            "\tnext block is different but ids fit into free space: {:?}, last_id: {last_id}",
-                            ids_to_move
-                        );
-
-                        if id_count == 1 {
-                            ids_to_move.insert(j as i32);
-                        }
-
-                        let mut tmp_i = i;
-                        for id_to_move in ids_to_move {
-                            println!(
-                                "\t\treplacing blocks[{tmp_i}]: {:?} with blocks[{id_to_move}]: {:?}",
-                                blocks[i], blocks[id_to_move as usize]
-                            );
-                            blocks[tmp_i] = blocks[id_to_move as usize];
-                            blocks[id_to_move as usize] = GAP;
-                            tmp_i += 1;
-                        }
-
-                        break;
-                    }
-
-                    if last_id == second_to_last_id {
-                        ids_to_move.insert(j as i32);
-                        ids_to_move.insert((j - 1) as i32);
-                    } else {
-                        ids_to_move = HashSet::new();
-                    }
-
-                    j -= 1;
-                }
-            }
-            _ => {
-                continue;
-            }
-        }
-        println!("\tblocks: {:?}", blocks);
-    }
-
-    blocks
+#[derive(Debug)]
+struct FreeSpace {
+    start: usize,
+    size: usize,
 }
 
 pub fn process(input: &str) -> usize {
-    let blocks = convert_to_blocks(input.trim());
-    let blocks = move_blocks_around(blocks);
+    let mut files: Vec<FileBlock> = Vec::new();
+    let mut free_space: Vec<FreeSpace> = Vec::new();
+    let mut free = false;
+    let mut start = 0;
+    let mut id = 0;
 
-    0
+    for c in input.trim().chars() {
+        let block_size = c.to_digit(10).unwrap() as usize;
+        if free {
+            free_space.push(FreeSpace {
+                start,
+                size: block_size,
+            });
+        } else {
+            files.push(FileBlock {
+                id,
+                start,
+                size: block_size,
+            });
+            id += 1;
+        }
+        free = !free;
+        start += block_size;
+    }
+
+    for file in files.iter_mut().rev() {
+        for free in free_space.iter_mut() {
+            if free.size < file.size {
+                continue;
+            } else if file.start < free.start {
+                break;
+            }
+            free.size -= file.size;
+            file.start = free.start;
+            free.start += file.size;
+            break;
+        }
+    }
+
+    files
+        .iter()
+        .map(|file| -> usize {
+            let mut sum = 0;
+            for i in file.start..file.start + file.size {
+                sum += file.id * i;
+            }
+            sum
+        })
+        .sum()
 }
 
 #[cfg(test)]
@@ -108,29 +75,11 @@ mod tests {
     }
 
     #[rstest]
-    fn test_move_blocks_around(input: &str) {
-        // given
-        let blocks = convert_to_blocks(input);
-
+    fn test_process(input: &str) {
         // when
-        let output = move_blocks_around(blocks);
+        let output = process(input);
 
         // then
-        assert_eq!(
-            output,
-            [
-                0, 0, 9, 9, 2, 1, 1, 1, 7, 7, 7, -1, 4, 4, -1, 3, 3, 3, -1, -1, -1, -1, 5, 5, 5, 5,
-                -1, 6, 6, 6, 6, -1, -1, -1, -1, -1, 8, 8, 8, 8, -1, -1,
-            ]
-        )
+        assert_eq!(output, 2858)
     }
-
-    // #[rstest]
-    // fn test_process(input: &str) {
-    //     // when
-    //     let output = process(input);
-
-    //     // then
-    //     assert_eq!(output, 2858)
-    // }
 }
