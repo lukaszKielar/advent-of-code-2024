@@ -11,7 +11,7 @@ pub fn process(input: &str) -> usize {
             if topo_map[i][j] != 0 {
                 continue;
             }
-            let mut local_result: usize = 0;
+            let mut local_res: usize = 0;
 
             let mut stack: Vec<Coords> = vec![];
             let mut visited: HashSet<(usize, usize)> = HashSet::new();
@@ -24,7 +24,7 @@ pub fn process(input: &str) -> usize {
                 visited.insert((current_i, current_j));
 
                 if topo_map[current_i][current_j] == 9 {
-                    local_result += 1;
+                    local_res += 1;
                     continue;
                 }
 
@@ -61,7 +61,7 @@ pub fn process(input: &str) -> usize {
                 }
             }
 
-            res += local_result;
+            res += local_res;
         }
     }
 
