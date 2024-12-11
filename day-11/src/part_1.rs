@@ -22,7 +22,6 @@ pub fn process(input: &str) -> usize {
     let mut blinks = 25;
 
     while blinks > 0 {
-        println!("{blinks}");
         stones = stones.iter().flat_map(|s| blink(s)).collect::<Vec<_>>();
         blinks -= 1;
     }
