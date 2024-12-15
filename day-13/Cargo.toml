@@ -10,5 +10,8 @@ name = "part_1"
 [[bin]]
 name = "part_2"
 
+[dependencies]
+itertools.workspace = true
+
 [dev-dependencies]
 rstest.workspace = true
