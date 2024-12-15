@@ -3,8 +3,8 @@ use regex::Regex;
 pub mod part_1;
 pub mod part_2;
 
-const X: usize = 101;
-const Y: usize = 103;
+pub const X: usize = 101;
+pub const Y: usize = 103;
 
 #[derive(Debug, PartialEq)]
 struct Robot {
