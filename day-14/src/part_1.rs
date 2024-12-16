@@ -16,7 +16,6 @@ pub fn process(input: &str, x: usize, y: usize) -> usize {
 
     for mut robot in robots {
         robot.move_sec(100, &(x, y));
-        println!("{robot:?}");
 
         let ending_position = robot.p;
 

@@ -6,5 +6,5 @@ fn main() {
     let res = day_14::part_1::process(input, X, Y);
 
     println!("res: {res}");
-    assert_eq!(res, 999);
+    assert_eq!(res, 218965032);
 }

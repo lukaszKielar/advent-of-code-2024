@@ -13,28 +13,20 @@ struct Robot {
 }
 
 impl Robot {
-    fn move_sec(&mut self, mut sec: u32, grid: &(usize, usize)) {
-        while sec > 0 {
-            let mut new_px = self.p.0 as isize + self.v.0;
+    fn move_sec(&mut self, sec: u32, grid: &(usize, usize)) {
+        let mut new_px = (self.p.0 as isize + self.v.0 * sec as isize) % grid.0 as isize;
+        let mut new_py = (self.p.1 as isize + self.v.1 * sec as isize) % grid.1 as isize;
 
-            if new_px < 0 {
-                new_px = grid.0 as isize + new_px;
-            } else if new_px >= grid.0 as isize {
-                new_px = new_px - grid.0 as isize;
-            }
-
-            let mut new_py = self.p.1 as isize + self.v.1;
-
-            if new_py < 0 {
-                new_py = grid.1 as isize + new_py;
-            } else if new_py >= grid.1 as isize {
-                new_py = grid.1 as isize - new_py;
-            }
-
-            self.p = (new_px as usize, new_py as usize);
-
-            sec -= 1;
+        if new_px < 0 {
+            new_px += grid.0 as isize;
         }
+
+        if new_py < 0 {
+            new_py += grid.1 as isize;
+        }
+
+        self.p.0 = new_px as usize;
+        self.p.1 = new_py as usize;
     }
 }
 
