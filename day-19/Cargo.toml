@@ -1,0 +1,14 @@
+[package]
+name = "day-19"
+description = "https://adventofcode.com/2024/day/19"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "part_1"
+
+[[bin]]
+name = "part_2"
+
+[dev-dependencies]
+rstest.workspace = true
