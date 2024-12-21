@@ -1,31 +1,36 @@
+use std::collections::HashMap;
+
 use crate::parse_input;
+
+fn calculate_combinations<'d>(
+    design: &'d str,
+    patterns: &'_ Vec<&'_ str>,
+    cache: &mut HashMap<&'d str, usize>,
+) -> usize {
+    if cache.get(design).is_none() {
+        if design.len() == 0 {
+            return 1;
+        }
+        let mut res = 0;
+        for pat in patterns {
+            if design.starts_with(pat) {
+                res += calculate_combinations(&design[pat.len()..], patterns, cache);
+            }
+        }
+        cache.insert(design, res);
+    }
+    // SAFETY: key exists by now
+    *cache.get(design).unwrap()
+}
 
 pub fn process(input: &str) -> usize {
     let (patterns, designs) = parse_input(input);
     let mut res = 0;
+    let mut cache = HashMap::new();
 
     for design in designs {
-        println!("{design:?}");
-        let mut design = design.to_owned();
-        let mut chars = 0;
-
-        while !design.is_empty() {
-            println!("\t{design:?}, {chars}");
-            let ref pat = &design[..design.len() - chars];
-            if patterns.contains(pat) {
-                design = design[design.len() - chars..].to_owned();
-                chars = 0;
-            } else {
-                if chars >= design.len() {
-                    break;
-                }
-                chars += 1;
-            }
-        }
-
-        if design.is_empty() {
-            println!("\tdone");
-            res += 1;
+        if calculate_combinations(design, &patterns, &mut cache) > 0 {
+            res += 1
         }
     }
 
