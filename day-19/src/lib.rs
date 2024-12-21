@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub mod part_1;
 pub mod part_2;
 
@@ -8,6 +10,27 @@ fn parse_input(input: &str) -> (Vec<&str>, Vec<&str>) {
     let designs = split[1].lines().collect();
 
     (patterns, designs)
+}
+
+fn calculate_combinations<'d>(
+    design: &'d str,
+    patterns: &'_ Vec<&'_ str>,
+    cache: &mut HashMap<&'d str, usize>,
+) -> usize {
+    if cache.get(design).is_none() {
+        if design.len() == 0 {
+            return 1;
+        }
+        let mut res = 0;
+        for pat in patterns {
+            if design.starts_with(pat) {
+                res += calculate_combinations(&design[pat.len()..], patterns, cache);
+            }
+        }
+        cache.insert(design, res);
+    }
+    // SAFETY: key exists by now
+    *cache.get(design).unwrap()
 }
 
 #[cfg(test)]
