@@ -8,8 +8,7 @@ pub fn process(input: &str) -> usize {
     let matches = input
         .trim()
         .lines()
-        .map(|line| re.find_iter(line).collect::<Vec<_>>())
-        .flatten()
+        .flat_map(|line| re.find_iter(line).collect::<Vec<_>>())
         .collect::<Vec<_>>();
 
     let mut res = 0;

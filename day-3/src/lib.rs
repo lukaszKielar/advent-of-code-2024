@@ -1,8 +1,8 @@
 pub mod part_1;
 pub mod part_2;
 
-const DO: &'static str = "do()";
-const DONT: &'static str = "don't()";
+const DO: &str = "do()";
+const DONT: &str = "don't()";
 
 #[derive(Debug)]
 enum MulStatus {

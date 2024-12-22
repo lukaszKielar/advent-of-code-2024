@@ -1,13 +1,13 @@
 use crate::{Report, MAX_DIFF, MIN_DIFF};
 
-fn is_safe(levels: &Vec<usize>, stop: bool) -> bool {
+fn is_safe(levels: &[usize], stop: bool) -> bool {
     if all_decreasing(levels) || all_increasing(levels) {
-        return true;
+        true
     } else if stop {
         return false;
     } else {
         for i in 0..levels.len() {
-            let mut filtered_levels = levels.clone();
+            let mut filtered_levels = levels.to_vec();
             filtered_levels.remove(i);
 
             if is_safe(&filtered_levels, true) {
@@ -18,17 +18,17 @@ fn is_safe(levels: &Vec<usize>, stop: bool) -> bool {
     }
 }
 
-fn all_increasing(levels: &Vec<usize>) -> bool {
+fn all_increasing(levels: &[usize]) -> bool {
     levels.windows(2).all(|w| {
         let diff = w[0].abs_diff(w[1]);
-        (w[0] < w[1]) && (diff >= MIN_DIFF && diff <= MAX_DIFF)
+        (w[0] < w[1]) && (MIN_DIFF..=MAX_DIFF).contains(&diff)
     })
 }
 
-fn all_decreasing(levels: &Vec<usize>) -> bool {
+fn all_decreasing(levels: &[usize]) -> bool {
     levels.windows(2).all(|w| {
         let diff = w[0].abs_diff(w[1]);
-        (w[0] > w[1]) && (diff >= MIN_DIFF && diff <= MAX_DIFF)
+        (w[0] > w[1]) && (MIN_DIFF..=MAX_DIFF).contains(&diff)
     })
 }
 
@@ -36,7 +36,7 @@ pub fn process(input: &str) -> usize {
     input
         .trim()
         .lines()
-        .map(|line| Report::from(line))
+        .map(Report::from)
         .filter(|r| is_safe(&r.0, false))
         .collect::<Vec<_>>()
         .len()

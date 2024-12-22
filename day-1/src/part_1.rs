@@ -4,10 +4,10 @@ pub fn process(input: &str) -> usize {
     let input = parse_input(input);
 
     let mut vec1 = input.iter().map(|elem| elem.0).collect::<Vec<_>>();
-    vec1.sort_by(|a, b| a.cmp(b));
+    vec1.sort();
 
     let mut vec2 = input.iter().map(|elem| elem.1).collect::<Vec<_>>();
-    vec2.sort_by(|a, b| a.cmp(b));
+    vec2.sort();
 
     std::iter::zip(vec1, vec2)
         .map(|elems| elems.0.abs_diff(elems.1))

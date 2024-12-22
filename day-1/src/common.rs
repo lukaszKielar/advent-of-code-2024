@@ -3,7 +3,7 @@ pub(crate) fn parse_input(input: &str) -> Vec<(usize, usize)> {
         .trim()
         .lines()
         .map(|line| {
-            let line = line.trim().split_whitespace().collect::<Vec<_>>();
+            let line = line.split_whitespace().collect::<Vec<_>>();
             (
                 line[0].parse::<usize>().unwrap(),
                 line[1].parse::<usize>().unwrap(),
