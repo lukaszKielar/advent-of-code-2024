@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 pub fn process(input: &str) -> usize {
     let stones = input
-        .trim()
         .split_whitespace()
         .map(|elem| elem.parse::<usize>().unwrap())
         .collect::<Vec<_>>();

@@ -9,7 +9,6 @@ fn parse_input(input: &str) -> Vec<(usize, Vec<usize>)> {
             let s = line.split(": ").collect::<Vec<_>>();
             let res = s[0].trim().parse::<usize>().unwrap();
             let values = s[1]
-                .trim()
                 .split_whitespace()
                 .map(|e| e.parse::<usize>().unwrap())
                 .collect::<Vec<_>>();
@@ -78,7 +77,7 @@ pub fn process(input: &str, operators: &Vec<&str>) -> usize {
     let mut res = 0;
 
     for i in input {
-        let combinations = generate_combinations(&i.1, &operators);
+        let combinations = generate_combinations(&i.1, operators);
 
         #[cfg(test)]
         println!("i: {:?}", i);

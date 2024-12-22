@@ -18,13 +18,13 @@ fn calculate_combinations<'d>(
     cache: &mut HashMap<&'d str, usize>,
 ) -> usize {
     if cache.get(design).is_none() {
-        if design.len() == 0 {
+        if design.is_empty() {
             return 1;
         }
         let mut res = 0;
         for pat in patterns {
-            if design.starts_with(pat) {
-                res += calculate_combinations(&design[pat.len()..], patterns, cache);
+            if let Some(rest) = design.strip_prefix(pat) {
+                res += calculate_combinations(rest, patterns, cache);
             }
         }
         cache.insert(design, res);

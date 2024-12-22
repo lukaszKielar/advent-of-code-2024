@@ -1,5 +1,3 @@
-use std::usize;
-
 use crate::{checksum, convert_to_blocks, Blocks, GAP};
 
 fn move_blocks_around(blocks: Blocks) -> Blocks {

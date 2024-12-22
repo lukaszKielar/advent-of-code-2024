@@ -7,11 +7,6 @@ pub fn process(input: &str) -> usize {
 
     for m in moves {
         let next_position: Point = (robot.i + m.i, robot.j + m.j).into();
-        let next_char = grid[next_position.i as usize][next_position.j as usize];
-        println!(
-            "robot [x={:?},y={:?}], move: {:?}, next_char: [{:?}]",
-            robot.i, robot.j, m, next_char
-        );
 
         if grid[next_position.i as usize][next_position.j as usize] == '#' {
             continue;

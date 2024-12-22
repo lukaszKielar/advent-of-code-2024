@@ -148,7 +148,7 @@ mod tests {
 47|29
 75|13
 53|13";
-        let page_ordering_rules = parse_page_ordering_rules(&pairs);
+        let page_ordering_rules = parse_page_ordering_rules(pairs);
         let page_ordering_rules = sort_page_ordering_rules(page_ordering_rules);
 
         // when

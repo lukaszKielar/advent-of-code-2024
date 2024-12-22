@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{hash_map::Entry, HashMap};
 
 pub mod part_1;
 pub mod part_2;
@@ -49,28 +49,24 @@ fn sort_page_ordering_rules(page_ordering_rules: Vec<Vec<usize>>) -> HashMap<usi
         let before = row[0];
         let after = row[1];
 
-        if !sorted_input.contains_key(&before) {
+        if let Entry::Vacant(e) = sorted_input.entry(before) {
             let nums = Nums {
                 before: vec![after],
                 after: vec![],
             };
-            sorted_input.insert(before, nums);
-        } else {
-            if let Some(nums) = sorted_input.get_mut(&before) {
-                nums.insert_into_before(after);
-            }
+            e.insert(nums);
+        } else if let Some(nums) = sorted_input.get_mut(&before) {
+            nums.insert_into_before(after);
         }
 
-        if !sorted_input.contains_key(&after) {
+        if let Entry::Vacant(e) = sorted_input.entry(after) {
             let nums = Nums {
                 before: vec![],
                 after: vec![before],
             };
-            sorted_input.insert(after, nums);
-        } else {
-            if let Some(nums) = sorted_input.get_mut(&after) {
-                nums.insert_into_after(before);
-            }
+            e.insert(nums);
+        } else if let Some(nums) = sorted_input.get_mut(&after) {
+            nums.insert_into_after(before);
         }
     }
 

@@ -34,9 +34,7 @@ pub fn process(input: &str, x: usize, y: usize) -> usize {
         }
     }
 
-    println!("{quadrant_map:?}");
-
-    let res = quadrant_map.values().fold(1, |acc, &x| acc * x);
+    let res = quadrant_map.values().product::<usize>();
     res
 }
 

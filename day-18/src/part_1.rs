@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use crate::{parse_input, Coord};
 
-fn bfs(start: Coord, end: Coord, grid: &Vec<Vec<char>>) -> Option<Vec<Coord>> {
+fn bfs(start: Coord, end: Coord, grid: &[Vec<char>]) -> Option<Vec<Coord>> {
     let mut queue = VecDeque::new();
     let mut visited = vec![vec![false; grid[0].len()]; grid.len()];
     let mut parent = vec![vec![None; grid[0].len()]; grid.len()];

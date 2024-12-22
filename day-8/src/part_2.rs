@@ -8,12 +8,12 @@ fn find_antinodes(matrix: &Matrix, antennas: &HashMap<char, HashSet<Coords>>) ->
     let mut antinodes = HashSet::new();
 
     for a in antennas.values() {
-        for combo in a.into_iter().combinations(2).collect::<Vec<_>>() {
+        for combo in a.iter().combinations(2).collect::<Vec<_>>() {
             let a1 = combo[0];
             let a2 = combo[1];
 
-            antinodes.insert(a1.clone());
-            antinodes.insert(a2.clone());
+            antinodes.insert(*a1);
+            antinodes.insert(*a2);
 
             let diff: Coords = (a1.0 - a2.0, a1.1 - a2.1);
 

@@ -44,7 +44,7 @@ impl From<&str> for Robot {
 }
 
 fn parse_input(input: &str) -> Vec<Robot> {
-    input.trim().lines().map(|line| Robot::from(line)).collect()
+    input.trim().lines().map(Robot::from).collect()
 }
 
 #[cfg(test)]

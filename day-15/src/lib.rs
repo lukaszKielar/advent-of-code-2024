@@ -28,12 +28,10 @@ fn parse_input(input: &str) -> (Grid, Moves) {
         .map(|line| line.chars().collect())
         .collect();
 
-    println!("{grid:?}");
-
     let moves = input[1]
         .trim()
         .lines()
-        .map(|line| {
+        .flat_map(|line| {
             line.chars()
                 .map(|char| match char {
                     '>' => (0, 1).into(),
@@ -44,7 +42,6 @@ fn parse_input(input: &str) -> (Grid, Moves) {
                 })
                 .collect::<Vec<_>>()
         })
-        .flatten()
         .collect();
 
     (grid, moves)

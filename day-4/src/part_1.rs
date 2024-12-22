@@ -19,15 +19,13 @@ pub fn process(input: &str) -> usize {
                 &char_matrix[row + 3][col..(col + 4)],
             ];
 
-            let mut m_row_count = 0;
-            for m_row in m {
-                if m_row == ['X', 'M', 'A', 'S'] || m_row == ['S', 'A', 'M', 'X'] {
-                    if !rows_matches.contains(&(row + m_row_count, col)) {
-                        res += 1;
-                        rows_matches.push((row + m_row_count, col));
-                    }
+            for (m_row_count, m_row) in m.into_iter().enumerate() {
+                if (m_row == ['X', 'M', 'A', 'S'] || m_row == ['S', 'A', 'M', 'X'])
+                    && !rows_matches.contains(&(row + m_row_count, col))
+                {
+                    res += 1;
+                    rows_matches.push((row + m_row_count, col));
                 };
-                m_row_count += 1;
             }
 
             let diag1 = [m[0][0], m[1][1], m[2][2], m[3][3]];
@@ -42,11 +40,11 @@ pub fn process(input: &str) -> usize {
 
             for i in 0..4 {
                 let m_col = [m[0][i], m[1][i], m[2][i], m[3][i]];
-                if m_col == ['X', 'M', 'A', 'S'] || m_col == ['S', 'A', 'M', 'X'] {
-                    if !cols_matches.contains(&(col + i)) {
-                        res += 1;
-                        cols_matches.push(col + i);
-                    }
+                if (m_col == ['X', 'M', 'A', 'S'] || m_col == ['S', 'A', 'M', 'X'])
+                    && !cols_matches.contains(&(col + i))
+                {
+                    res += 1;
+                    cols_matches.push(col + i);
                 };
             }
         }

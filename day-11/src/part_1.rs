@@ -1,6 +1,6 @@
 fn blink(stone: &str) -> Vec<String> {
     if stone == "0" {
-        return vec!["1".to_string()];
+        vec!["1".to_string()]
     } else if stone.len() % 2 == 0 {
         let left_stone = stone[..stone.len() / 2].to_string();
         let right_stone = stone[stone.len() / 2..]
@@ -15,7 +15,6 @@ fn blink(stone: &str) -> Vec<String> {
 
 pub fn process(input: &str) -> usize {
     let mut stones = input
-        .trim()
         .split_whitespace()
         .map(|elem| elem.to_string())
         .collect::<Vec<_>>();

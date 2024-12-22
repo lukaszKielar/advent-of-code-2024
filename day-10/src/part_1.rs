@@ -19,8 +19,7 @@ pub fn process(input: &str) -> usize {
             stack.push((i, j));
             visited.insert((i, j));
 
-            while stack.len() > 0 {
-                let (current_i, current_j) = stack.pop().unwrap();
+            while let Some((current_i, current_j)) = stack.pop() {
                 visited.insert((current_i, current_j));
 
                 if topo_map[current_i][current_j] == 9 {
@@ -28,36 +27,32 @@ pub fn process(input: &str) -> usize {
                     continue;
                 }
 
-                if current_i > 0 {
-                    if topo_map[current_i - 1][current_j] == topo_map[current_i][current_j] + 1
-                        && !visited.contains(&(current_i - 1, current_j))
-                    {
-                        stack.push((current_i - 1, current_j));
-                    }
+                if current_i > 0
+                    && topo_map[current_i - 1][current_j] == topo_map[current_i][current_j] + 1
+                    && !visited.contains(&(current_i - 1, current_j))
+                {
+                    stack.push((current_i - 1, current_j));
                 }
 
-                if current_j > 0 {
-                    if topo_map[current_i][current_j - 1] == topo_map[current_i][current_j] + 1
-                        && !visited.contains(&(current_i, current_j - 1))
-                    {
-                        stack.push((current_i, current_j - 1));
-                    }
+                if current_j > 0
+                    && topo_map[current_i][current_j - 1] == topo_map[current_i][current_j] + 1
+                    && !visited.contains(&(current_i, current_j - 1))
+                {
+                    stack.push((current_i, current_j - 1));
                 }
 
-                if current_i + 1 < topo_map.len() {
-                    if topo_map[current_i + 1][current_j] == topo_map[current_i][current_j] + 1
-                        && !visited.contains(&(current_i + 1, current_j))
-                    {
-                        stack.push((current_i + 1, current_j));
-                    }
+                if current_i + 1 < topo_map.len()
+                    && topo_map[current_i + 1][current_j] == topo_map[current_i][current_j] + 1
+                    && !visited.contains(&(current_i + 1, current_j))
+                {
+                    stack.push((current_i + 1, current_j));
                 }
 
-                if current_j + 1 < topo_map[0].len() {
-                    if topo_map[current_i][current_j + 1] == topo_map[current_i][current_j] + 1
-                        && !visited.contains(&(current_i, current_j + 1))
-                    {
-                        stack.push((current_i, current_j + 1));
-                    }
+                if current_j + 1 < topo_map[0].len()
+                    && topo_map[current_i][current_j + 1] == topo_map[current_i][current_j] + 1
+                    && !visited.contains(&(current_i, current_j + 1))
+                {
+                    stack.push((current_i, current_j + 1));
                 }
             }
 
