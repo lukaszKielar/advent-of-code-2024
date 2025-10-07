@@ -1,55 +1,49 @@
 use crate::parse_input;
 
 pub fn process(input: &str) -> usize {
-    let char_matrix = parse_input(input);
+    let grid = parse_input(input);
+    let rows = grid.len() as i32;
+    let cols = grid[0].len() as i32;
+    let mut count = 0;
 
-    let rows = char_matrix.len();
-    let cols = char_matrix[0].len();
+    // Directions: (di, dj) for 8 possible directions
+    let directions = [
+        (0, 1),   // right
+        (0, -1),  // left
+        (1, 0),   // down
+        (-1, 0),  // up
+        (1, 1),   // down-right
+        (1, -1),  // down-left
+        (-1, 1),  // up-right
+        (-1, -1), // up-left
+    ];
 
-    let mut res: usize = 0;
-
-    let mut rows_matches: Vec<(usize, usize)> = Vec::new();
-    for row in 0..(rows - 3) {
-        let mut cols_matches: Vec<usize> = Vec::new();
-        for col in 0..(cols - 3) {
-            let m = [
-                &char_matrix[row][col..(col + 4)],
-                &char_matrix[row + 1][col..(col + 4)],
-                &char_matrix[row + 2][col..(col + 4)],
-                &char_matrix[row + 3][col..(col + 4)],
-            ];
-
-            for (m_row_count, m_row) in m.into_iter().enumerate() {
-                if (m_row == ['X', 'M', 'A', 'S'] || m_row == ['S', 'A', 'M', 'X'])
-                    && !rows_matches.contains(&(row + m_row_count, col))
-                {
-                    res += 1;
-                    rows_matches.push((row + m_row_count, col));
-                };
-            }
-
-            let diag1 = [m[0][0], m[1][1], m[2][2], m[3][3]];
-            if diag1 == ['X', 'M', 'A', 'S'] || diag1 == ['S', 'A', 'M', 'X'] {
-                res += 1;
-            };
-
-            let diag2 = [m[3][0], m[2][1], m[1][2], m[0][3]];
-            if diag2 == ['X', 'M', 'A', 'S'] || diag2 == ['S', 'A', 'M', 'X'] {
-                res += 1;
-            };
-
-            for i in 0..4 {
-                let m_col = [m[0][i], m[1][i], m[2][i], m[3][i]];
-                if (m_col == ['X', 'M', 'A', 'S'] || m_col == ['S', 'A', 'M', 'X'])
-                    && !cols_matches.contains(&(col + i))
-                {
-                    res += 1;
-                    cols_matches.push(col + i);
-                };
+    for i in 0..rows {
+        for j in 0..cols {
+            for &(di, dj) in &directions {
+                if check_word(&grid, i, j, di, dj, "XMAS") {
+                    count += 1;
+                }
             }
         }
     }
-    res
+
+    count
+}
+
+fn check_word(grid: &[Vec<char>], i: i32, j: i32, di: i32, dj: i32, word: &str) -> bool {
+    let word_chars: Vec<char> = word.chars().collect();
+    for (k, &ch) in word_chars.iter().enumerate() {
+        let ni = i + k as i32 * di;
+        let nj = j + k as i32 * dj;
+        if ni < 0 || ni >= grid.len() as i32 || nj < 0 || nj >= grid[0].len() as i32 {
+            return false;
+        }
+        if grid[ni as usize][nj as usize] != ch {
+            return false;
+        }
+    }
+    true
 }
 
 #[cfg(test)]
