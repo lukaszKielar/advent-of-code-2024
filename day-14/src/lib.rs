@@ -6,7 +6,7 @@ pub mod part_2;
 pub const X: usize = 101;
 pub const Y: usize = 103;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 struct Robot {
     p: (usize, usize),
     v: (isize, isize),
