@@ -1,5 +1,13 @@
 use std::collections::{HashMap, HashSet};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+enum EdgeKind {
+    Top,
+    Bottom,
+    Left,
+    Right,
+}
+
 type Grid = Vec<Vec<char>>;
 type Coords = (usize, usize);
 type Regions = HashMap<usize, Region>;
@@ -23,7 +31,86 @@ impl Region {
     }
 
     fn sides(&self) -> usize {
-        todo!()
+        let mut edge_map: HashMap<(EdgeKind, usize), Vec<usize>> = HashMap::new();
+
+        for &(i, j) in &self.points {
+            // top edge
+            match i.checked_sub(1) {
+                Some(up) => {
+                    if !self.points.contains(&(up, j)) {
+                        edge_map
+                            .entry((EdgeKind::Top, i))
+                            .or_default()
+                            .push(j);
+                    }
+                }
+                None => {
+                    edge_map
+                        .entry((EdgeKind::Top, i))
+                        .or_default()
+                        .push(j);
+                }
+            }
+
+            // bottom edge
+            match i.checked_add(1) {
+                Some(down) => {
+                    if !self.points.contains(&(down, j)) {
+                        edge_map
+                            .entry((EdgeKind::Bottom, down))
+                            .or_default()
+                            .push(j);
+                    }
+                }
+                None => {
+                    edge_map
+                        .entry((EdgeKind::Bottom, i.saturating_add(1)))
+                        .or_default()
+                        .push(j);
+                }
+            }
+
+            // left edge
+            match j.checked_sub(1) {
+                Some(left) => {
+                    if !self.points.contains(&(i, left)) {
+                        edge_map
+                            .entry((EdgeKind::Left, j))
+                            .or_default()
+                            .push(i);
+                    }
+                }
+                None => {
+                    edge_map
+                        .entry((EdgeKind::Left, j))
+                        .or_default()
+                        .push(i);
+                }
+            }
+
+            // right edge
+            match j.checked_add(1) {
+                Some(right) => {
+                    if !self.points.contains(&(i, right)) {
+                        edge_map
+                            .entry((EdgeKind::Right, right))
+                            .or_default()
+                            .push(i);
+                    }
+                }
+                None => {
+                    edge_map
+                        .entry((EdgeKind::Right, j.saturating_add(1)))
+                        .or_default()
+                        .push(i);
+                }
+            }
+        }
+
+        edge_map
+            .values()
+            .map(|positions| count_runs(positions.clone()))
+            .sum()
     }
 
     fn price(&self) -> usize {
@@ -101,6 +188,24 @@ pub fn process(input: &str) -> usize {
     }
 
     res
+}
+
+fn count_runs(mut positions: Vec<usize>) -> usize {
+    if positions.is_empty() {
+        return 0;
+    }
+
+    positions.sort_unstable();
+    positions.dedup();
+
+    let mut sides = 1;
+    for k in 1..positions.len() {
+        if positions[k] != positions[k - 1] + 1 {
+            sides += 1;
+        }
+    }
+
+    sides
 }
 
 #[cfg(test)]

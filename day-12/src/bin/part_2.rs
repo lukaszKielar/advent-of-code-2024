@@ -4,5 +4,5 @@ fn main() {
     let res = day_12::part_2::process(input);
 
     println!("res: {res}");
-    assert_eq!(res, 999);
+    assert_eq!(res, 901100);
 }
