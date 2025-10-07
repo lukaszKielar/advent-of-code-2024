@@ -1,12 +1,8 @@
 use crate::parse_input;
 
 pub fn process(input: &str) -> usize {
-    let input = parse_input(input);
-
-    let mut vec1 = input.iter().map(|elem| elem.0).collect::<Vec<_>>();
+    let (mut vec1, mut vec2) = parse_input(input);
     vec1.sort();
-
-    let mut vec2 = input.iter().map(|elem| elem.1).collect::<Vec<_>>();
     vec2.sort();
 
     std::iter::zip(vec1, vec2)

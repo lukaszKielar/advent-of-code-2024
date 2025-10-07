@@ -3,22 +3,21 @@ use std::collections::HashMap;
 use crate::parse_input;
 
 pub fn process(input: &str) -> usize {
-    let input = parse_input(input);
+    let (vec1, vec2) = parse_input(input);
 
     let vec2_hashmap =
-        input
+        vec2
             .iter()
-            .map(|elem| elem.1)
-            .fold(HashMap::<usize, usize>::new(), |mut m, x| {
+            .fold(HashMap::<usize, usize>::new(), |mut m, &x| {
                 *m.entry(x).or_insert(0) += 1;
                 m
             });
 
-    input
+    vec1
         .iter()
-        .map(|elem| {
-            let occurences = vec2_hashmap.get(&elem.0).unwrap_or(&0);
-            elem.0 * occurences
+        .map(|&elem| {
+            let occurences = vec2_hashmap.get(&elem).unwrap_or(&0);
+            elem * occurences
         })
         .sum()
 }

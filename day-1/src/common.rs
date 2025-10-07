@@ -1,15 +1,15 @@
-pub(crate) fn parse_input(input: &str) -> Vec<(usize, usize)> {
+pub(crate) fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
     input
         .trim()
         .lines()
         .map(|line| {
-            let line = line.split_whitespace().collect::<Vec<_>>();
+            let mut parts = line.split_whitespace();
             (
-                line[0].parse::<usize>().unwrap(),
-                line[1].parse::<usize>().unwrap(),
+                parts.next().unwrap().parse::<usize>().unwrap(),
+                parts.next().unwrap().parse::<usize>().unwrap(),
             )
         })
-        .collect::<Vec<_>>()
+        .unzip()
 }
 
 #[cfg(test)]
@@ -29,9 +29,10 @@ mod tests {
 3   3";
 
         // when
-        let output = parse_input(input);
+        let (a, b) = parse_input(input);
 
         // then
-        assert_eq!(output, vec![(3, 4), (4, 3), (2, 5), (1, 3), (3, 9), (3, 3)]);
+        assert_eq!(a, vec![3, 4, 2, 1, 3, 3]);
+        assert_eq!(b, vec![4, 3, 5, 3, 9, 3]);
     }
 }
