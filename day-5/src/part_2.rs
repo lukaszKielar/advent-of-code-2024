@@ -1,26 +1,76 @@
-use std::collections::HashMap;
+use std::cmp::Reverse;
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 use crate::{parse_page_ordering_rules, sort_page_ordering_rules, Nums};
 
-fn sort_line(line: Vec<usize>, page_ordering_rules: HashMap<usize, Nums>) -> Vec<usize> {
-    let line_len = line.len();
-    let mut new_line: Vec<usize> = line;
+fn sort_line(line: Vec<usize>, page_ordering_rules: &HashMap<usize, Nums>) -> Vec<usize> {
+    let nodes: HashSet<usize> = line.iter().copied().collect();
+    if nodes.len() <= 1 {
+        return line;
+    }
 
-    for i in 0..line_len - 1 {
-        for j in 0..line_len - 1 - i {
-            let elem = new_line[j];
-            let next_elem = new_line[j + 1];
+    let positions: HashMap<usize, usize> = line
+        .iter()
+        .enumerate()
+        .map(|(idx, &page)| (page, idx))
+        .collect();
 
-            let nums = Nums::new();
-            let elem_nums = page_ordering_rules.get(&elem).unwrap_or(&nums);
+    let mut adj: HashMap<usize, Vec<usize>> = nodes
+        .iter()
+        .map(|&page| (page, Vec::new()))
+        .collect();
 
-            if elem_nums.after.contains(&next_elem) {
-                new_line.swap(j, j + 1);
+    let mut indegree: HashMap<usize, usize> = nodes.iter().map(|&page| (page, 0)).collect();
+
+    for (&before, nums) in page_ordering_rules {
+        if !nodes.contains(&before) {
+            continue;
+        }
+
+        if let Some(neighbors) = adj.get_mut(&before) {
+            for &after in &nums.before {
+                if !nodes.contains(&after) {
+                    continue;
+                }
+                if neighbors.contains(&after) {
+                    continue;
+                }
+                neighbors.push(after);
+                *indegree.get_mut(&after).unwrap() += 1;
             }
         }
     }
 
-    new_line
+    let mut heap: BinaryHeap<Reverse<(usize, usize)>> = BinaryHeap::new();
+    for (&page, &deg) in &indegree {
+        if deg == 0 {
+            let pos = positions.get(&page).copied().unwrap_or(usize::MAX);
+            heap.push(Reverse((pos, page)));
+        }
+    }
+
+    let mut result: Vec<usize> = Vec::with_capacity(nodes.len());
+
+    while let Some(Reverse((_, page))) = heap.pop() {
+        result.push(page);
+        if let Some(neighbors) = adj.get(&page) {
+            for &neighbor in neighbors {
+                if let Some(entry) = indegree.get_mut(&neighbor) {
+                    *entry -= 1;
+                    if *entry == 0 {
+                        let pos = positions.get(&neighbor).copied().unwrap_or(usize::MAX);
+                        heap.push(Reverse((pos, neighbor)));
+                    }
+                }
+            }
+        }
+    }
+
+    if result.len() == nodes.len() {
+        result
+    } else {
+        line
+    }
 }
 
 pub fn process(input: &str) -> usize {
@@ -60,7 +110,7 @@ pub fn process(input: &str) -> usize {
 
             status
         })
-        .map(|l| sort_line(l, page_ordering_rules.clone()))
+        .map(|l| sort_line(l, &page_ordering_rules))
         .map(|l| l[l.len() / 2])
         .collect::<Vec<_>>()
         .into_iter()
@@ -152,7 +202,7 @@ mod tests {
         let page_ordering_rules = sort_page_ordering_rules(page_ordering_rules);
 
         // when
-        let output = sort_line(line, page_ordering_rules);
+        let output = sort_line(line, &page_ordering_rules);
 
         // then
         assert_eq!(output, expected)
