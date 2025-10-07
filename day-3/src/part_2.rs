@@ -5,11 +5,7 @@ use crate::{Mul, MulStatus, DO, DONT};
 pub fn process(input: &str) -> usize {
     let re = Regex::new(r"(do\(\)|don't\(\)|mul\((?<v1>[0-9]{1,3})\,(?<v2>[0-9]{1,3})\))").unwrap();
 
-    let matches = input
-        .trim()
-        .lines()
-        .flat_map(|line| re.find_iter(line).collect::<Vec<_>>())
-        .collect::<Vec<_>>();
+    let matches = re.find_iter(input.trim()).collect::<Vec<_>>();
 
     let mut res = 0;
 
