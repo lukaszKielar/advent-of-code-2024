@@ -38,17 +38,11 @@ impl Region {
             match i.checked_sub(1) {
                 Some(up) => {
                     if !self.points.contains(&(up, j)) {
-                        edge_map
-                            .entry((EdgeKind::Top, i))
-                            .or_default()
-                            .push(j);
+                        edge_map.entry((EdgeKind::Top, i)).or_default().push(j);
                     }
                 }
                 None => {
-                    edge_map
-                        .entry((EdgeKind::Top, i))
-                        .or_default()
-                        .push(j);
+                    edge_map.entry((EdgeKind::Top, i)).or_default().push(j);
                 }
             }
 
@@ -74,17 +68,11 @@ impl Region {
             match j.checked_sub(1) {
                 Some(left) => {
                     if !self.points.contains(&(i, left)) {
-                        edge_map
-                            .entry((EdgeKind::Left, j))
-                            .or_default()
-                            .push(i);
+                        edge_map.entry((EdgeKind::Left, j)).or_default().push(i);
                     }
                 }
                 None => {
-                    edge_map
-                        .entry((EdgeKind::Left, j))
-                        .or_default()
-                        .push(i);
+                    edge_map.entry((EdgeKind::Left, j)).or_default().push(i);
                 }
             }
 
